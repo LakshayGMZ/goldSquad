@@ -62,6 +62,7 @@ class Log(commands.Cog):
         self.bot = bot
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(start)
+            self.bot.logger = start.logger
             pass
 
     @commands.Cog.listener()
@@ -69,10 +70,12 @@ class Log(commands.Cog):
         start.logger.error(error)
 
     @commands.Cog.listener()
-    async def on_application_command_error(self, ctx, error):
+    async def on_application_command_error(self, interaction: discord.Interaction, error):
         start.logger.error(error)
 
     @commands.Cog.listener()
     async def on_app_command_completion(self, interaction: discord.Interaction, command):
-        start.logger.critical(f"{interaction.user.name} ({interaction.user.id}) used /{command.qualified_name}" + "".join(
-            f" {i['name']}: {i['value']}" for i in interaction.data["options"]))
+        start.logger.info(
+            f"{interaction.user.name} ({interaction.user.id}) used /{command.qualified_name}"
+            # + "".join(f" {i['name']}: {i['value']}" for i in interaction.data["options"])
+        )

@@ -20,13 +20,17 @@ class CustomBot(commands.Bot):
         db_pool: None,
         web_client: ClientSession,
         testing_guild_id: Optional[int] = None,
+        main_guild_id: Optional[int] = None,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
         self.db_pool = db_pool
         self.web_client = web_client
         self.testing_guild_id = testing_guild_id
+        self.main_guild_id = main_guild_id
         self.configData: DataStorage = DataStorage(filename=os.environ["CONFIG_FILE"])
+        self.help_command = None
+        self.owner_ids=[]
 
     async def setup_hook(self) -> None:
         for extension in os.listdir(os.environ["COGS_PATH"]):
@@ -49,13 +53,14 @@ class CustomBot(commands.Bot):
 async def main():
     async with ClientSession() as our_client:
         intents = discord.Intents.default()
-        # intents.message_content = True
+        intents.message_content = True
         async with CustomBot(
             commands.when_mentioned,
             db_pool=None,
             web_client=our_client,
             intents=intents,
-            testing_guild_id=934026380092530708
+            testing_guild_id=934026380092530708,
+            main_guild_id=934026380092530708
         ) as bot:
             await bot.start(os.environ["BOT_TOKEN"])
 
