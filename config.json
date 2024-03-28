@@ -3,6 +3,6 @@
     ],
     "lockMessageBody": "this is the updated lock messages!",
     "unlockMessageBody": "channel reopen message!",
-    "lockTime": "11:05",
-    "unlockTime": "11:06"
+    "lockTime": "20:00",
+    "unlockTime": "10:00"
 }
