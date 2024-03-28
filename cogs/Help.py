@@ -1,8 +1,9 @@
-from discord import Interaction
-from discord.ext import commands
-from discord import app_commands
-from main import CustomBot
 from discord import Embed
+from discord import Interaction
+from discord import app_commands
+from discord.ext import commands
+
+from main import CustomBot
 
 
 async def setup(bot):
@@ -29,9 +30,9 @@ class Help(commands.Cog):
         embed.add_field(name=mention_slash("channel remove", channelID),
                         value=f'> ```Remove a channel from the auto-lock list```', inline=False)
         embed.add_field(name=mention_slash("channel add-lock-time", channelID),
-                        value=f'> ```Add a time to auto-lock the channels in MST.```', inline=False)
+                        value=f'> ```Set a time to auto-lock the channels in MST.```', inline=False)
         embed.add_field(name=mention_slash("channel add-unlock-time", channelID),
-                        value=f'> ```Add a time to auto-unlock the channels in MST.```', inline=False)
+                        value=f'> ```Set a time to auto-unlock the channels in MST.```', inline=False)
         embed.add_field(name=mention_slash("channel lock-message", channelID),
                         value=f'> ```Set the message that will be sent before locking the channels.```', inline=False)
         embed.add_field(name=mention_slash("channel unlock-message", channelID),

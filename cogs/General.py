@@ -1,9 +1,9 @@
 import time
 
-import discord.ext.commands
 from discord.ext import commands
-from discord import app_commands
+
 from main import CustomBot
+
 
 async def setup(bot):
     await bot.add_cog(General(bot))

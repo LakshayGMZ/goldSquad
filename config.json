@@ -1,12 +1,8 @@
 {
     "lockedChannels": [
-        "992323039897329714",
-        "991307392488841268",
-        "995196235239653416",
-        "934026380092530712"
     ],
-    "lockMessageBody": "channel close message!",
+    "lockMessageBody": "this is the updated lock messages!",
     "unlockMessageBody": "channel reopen message!",
-    "lockTime": "21:34",
-    "unlockTime": "21:35"
+    "lockTime": "11:05",
+    "unlockTime": "11:06"
 }

@@ -1,13 +1,12 @@
 import concurrent.futures
+import json
 import logging
+import os
 
 import discord
-from discord import app_commands
-import dotenv
 import discord_webhook
+import dotenv
 from discord.ext import commands
-import os
-import json
 from discord_webhook import DiscordWebhook
 
 dotenv.load_dotenv()

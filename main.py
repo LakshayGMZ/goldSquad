@@ -1,10 +1,9 @@
 import asyncio
-import json
 from config import DataStorage
 import dotenv
 import os
 
-from typing import List, Optional
+from typing import Optional
 
 import discord
 from discord.ext import commands
@@ -59,8 +58,8 @@ async def main():
             db_pool=None,
             web_client=our_client,
             intents=intents,
-            testing_guild_id=934026380092530708,
-            main_guild_id=934026380092530708
+            testing_guild_id=None,
+            main_guild_id=949137157778468914
         ) as bot:
             await bot.start(os.environ["BOT_TOKEN"])
 

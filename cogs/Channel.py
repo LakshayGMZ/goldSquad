@@ -1,13 +1,15 @@
 import datetime
-import os
-import dotenv
-from .scheduler import MST
-import discord
 import json
-from discord.ext import commands
+import os
+
+import discord
+import dotenv
 from discord import app_commands
 from discord.app_commands import Range
+from discord.ext import commands
+
 from main import CustomBot
+from .scheduler import MST
 
 dotenv.load_dotenv()
 
@@ -66,7 +68,7 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
         return [app_commands.Choice(name=chann.name, value=str(chann.id))
                 for chann in lockedChannels if chann.name.startswith(current)]
 
-    @app_commands.command(name="add-lock-time", description="Add a time to auto-lock the channels in MST.")
+    @app_commands.command(name="add-lock-time", description="Set a time to auto-lock the channels in MST.")
     @app_commands.describe(
         hours="Enter the hour part of lock time in 24 hr format",
         minutes="Enter the minute part of lock time."
@@ -80,7 +82,7 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
         await self.bot.reload_extension(f'{os.environ["COGS_PATH"]}.scheduler')
         await interaction.response.send_message(content="Lock time set successfully :white_check_mark:", ephemeral=True)
 
-    @app_commands.command(name="add-unlock-time", description="Add a time to auto-unlock the channels in MST.")
+    @app_commands.command(name="add-unlock-time", description="Set a time to auto-unlock the channels in MST.")
     @app_commands.describe(
         hours="Enter the hour part of unlock time in 24 hr format",
         minutes="Enter the minute part of unlock time."

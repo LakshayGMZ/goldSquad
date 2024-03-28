@@ -1,11 +1,13 @@
 import asyncio
 import datetime
-import discord.utils
-from config import DataStorage
-from discord.ext import commands, tasks
-from main import CustomBot
 import os
+
+import discord.utils
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
+
+from config import DataStorage
+from main import CustomBot
 
 load_dotenv()
 dataStore = DataStorage(filename=os.environ["CONFIG_FILE"])
@@ -32,9 +34,11 @@ timeLock = timeLock.time().replace(tzinfo=MST())
 timeUnlock = datetime.datetime.strptime(dataStore.getUnlockTime(), '%H:%M')
 timeUnlock = timeUnlock.time().replace(tzinfo=MST())
 
-# roles = ["949453820893728838", "949866744158236742", "949433355479421008"]
-roles = [944510057784168540, 967661896658460783]
-
+roles = [
+    949453820893728838,
+    949866744158236742,
+    949433355479421008
+]
 
 @tasks.loop(time=timeLock)
 async def lockChannelTask(_bot: CustomBot):
@@ -73,7 +77,6 @@ async def unlockChannelTask(_bot: CustomBot):
             _bot.logger.warning("Found invalid Channel id: " + channelID)
             continue
     _bot.logger.info("Unlocked Channels")
-
 
 
 class Scheduler(commands.Cog):
