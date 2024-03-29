@@ -21,8 +21,8 @@ class Help(commands.Cog):
     @app_commands.command(name="help", description="Detailed help command for bot")
     async def help(self, interaction: Interaction):
         allCommands = await self.bot.tree.fetch_commands(guild=interaction.guild)
-        channelID = list(filter(lambda i: i.name == "channel", allCommands))[0].id
-        helpID = list(filter(lambda i: i.name == "help", allCommands))[0].id
+        channelID = "1223127275206086778"
+        helpID = "1223127274673541225"
 
         embed = Embed(title="Help Menu", description="commands list of the bot.", color=0x2f3136)
         embed.add_field(name=mention_slash("channel add", channelID),
