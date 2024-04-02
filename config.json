@@ -1,8 +1,0 @@
-{
-    "lockedChannels": [
-    ],
-    "lockMessageBody": "this is the updated lock messages!",
-    "unlockMessageBody": "channel reopen message!",
-    "lockTime": "20:00",
-    "unlockTime": "10:00"
-}
