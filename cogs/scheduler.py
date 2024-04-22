@@ -32,13 +32,17 @@ timeLock = datetime.datetime.strptime(dataStore.getLockTime(), '%H:%M')
 timeLock = timeLock.time().replace(tzinfo=MST())
 
 timeUnlock = datetime.datetime.strptime(dataStore.getUnlockTime(), '%H:%M')
+timeDelete = timeUnlock + datetime.timedelta(hours=1)
+
 timeUnlock = timeUnlock.time().replace(tzinfo=MST())
+timeDelete = timeDelete.time().replace(tzinfo=MST())
 
 roles = [
     949453820893728838,
     949866744158236742,
     949433355479421008
 ]
+
 
 @tasks.loop(time=timeLock)
 async def lockChannelTask(_bot: CustomBot):
@@ -51,8 +55,10 @@ async def lockChannelTask(_bot: CustomBot):
     for channelID in _bot.configData.getLockedChannels():
         try:
             channel = await _bot.fetch_channel(channelID)
-            await channel.send(content=_bot.configData.getLockedMessageBody())
+            message = await channel.send(content=_bot.configData.getLockedMessageBody())
             await channel.edit(overwrites=overwriteDict)
+
+            _bot.configData.addMessageIds(str(channel.id) + "-" + str(message.id))
         except discord.NotFound:
             _bot.logger.warning("Found invalid Channel id: " + channelID)
             continue
@@ -72,11 +78,28 @@ async def unlockChannelTask(_bot: CustomBot):
         try:
             channel = await _bot.fetch_channel(channelID)
             await channel.edit(overwrites=overwriteDict)
-            await channel.send(content=_bot.configData.getUnlockedMessageBody())
+            message = await channel.send(content=_bot.configData.getUnlockedMessageBody())
+
+            _bot.configData.addMessageIds(str(channel.id) + "-" + str(message.id))
         except discord.NotFound:
             _bot.logger.warning("Found invalid Channel id: " + channelID)
             continue
     _bot.logger.info("Unlocked Channels")
+
+
+@tasks.loop(time=timeDelete)
+async def deleteMessageTask(_bot: CustomBot):
+    for combinedID in _bot.configData.getMessageIds():
+        channelID, messageID = combinedID.split("-")
+        try:
+            channel = _bot.get_partial_messageable(channelID)
+            message = channel.get_partial_message(messageID)
+            await message.delete()
+        except discord.NotFound:
+            _bot.logger.warning("Found invalid message id: " + messageID)
+            continue
+    _bot.configData.clearMessageIds()
+    _bot.logger.info("Deleted Messages")
 
 
 class Scheduler(commands.Cog):
@@ -85,7 +108,9 @@ class Scheduler(commands.Cog):
 
         lockChannelTask.start(self.bot)
         unlockChannelTask.start(self.bot)
+        deleteMessageTask.start(self.bot)
 
     def cog_unload(self):
         lockChannelTask.cancel()
         unlockChannelTask.cancel()
+        deleteMessageTask.cancel()

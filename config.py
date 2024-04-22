@@ -23,20 +23,82 @@ class DataStorage:
         self.refresh()
         print(f"Record with key '{key}' created.")
 
-    def getLockedChannels(self):
-        return self.data["lockedChannels"]
+    # ==========================
+    # Message IDs
+
+    def getMessageIds(self):
+        return self.data["messageIds"]
+
+    def addMessageIds(self, messageID: str):
+        if messageID not in self.getMessageIds():
+            self.getMessageIds().append(messageID)
+            self._save_data()
+            return True
+        else:
+            return False
+
+    def removeMessageIds(self, messageID: str):
+        if messageID in self.getMessageIds():
+            self.getMessageIds().remove(messageID)
+            self._save_data()
+            return True
+        else:
+            return False
+
+    def clearMessageIds(self):
+        self.data["messageIds"] = []
+        self._save_data()
+        return True
+
+    # ==========================
+    # Lock Message Body
 
     def getLockedMessageBody(self):
         return self.data["lockMessageBody"]
 
+    def setLockMessageBody(self, message: str):
+        self.data["lockMessageBody"] = message
+        self._save_data()
+        return True
+
+    # ==========================
+    # Unlock Message Body
+
     def getUnlockedMessageBody(self):
         return self.data["unlockMessageBody"]
+
+    def setUnlockMessageBody(self, message: str):
+        self.data["unlockMessageBody"] = message
+        self._save_data()
+        return True
+
+    # ==========================
+    # Lock Time
 
     def getLockTime(self):
         return self.data["lockTime"]
 
+    def setLockTime(self, lockTime: str):
+        self.data["lockTime"] = lockTime
+        self._save_data()
+        return True
+
+    # ==========================
+    # Unlock Time
+
     def getUnlockTime(self):
         return self.data["unlockTime"]
+
+    def setUnlockTime(self, unlockTime: str):
+        self.data["unlockTime"] = unlockTime
+        self._save_data()
+        return True
+
+    # ==========================
+    # locked Channels' ids
+
+    def getLockedChannels(self):
+        return self.data["lockedChannels"]
 
     def addLockedChannels(self, channelID: str):
         if channelID not in self.getLockedChannels():
@@ -59,22 +121,3 @@ class DataStorage:
         self._save_data()
         return True
 
-    def setLockMessageBody(self, message: str):
-        self.data["lockMessageBody"] = message
-        self._save_data()
-        return True
-
-    def setUnlockMessageBody(self, message: str):
-        self.data["unlockMessageBody"] = message
-        self._save_data()
-        return True
-
-    def setLockTime(self, lockTime: str):
-        self.data["lockTime"] = lockTime
-        self._save_data()
-        return True
-
-    def setUnlockTime(self, unlockTime: str):
-        self.data["unlockTime"] = unlockTime
-        self._save_data()
-        return True
