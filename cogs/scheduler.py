@@ -1,4 +1,3 @@
-import asyncio
 import datetime
 import os
 
@@ -67,7 +66,8 @@ async def lockChannelTask(_bot: CustomBot):
 
 @tasks.loop(time=timeUnlock)
 async def unlockChannelTask(_bot: CustomBot):
-    await asyncio.sleep(10)
+    await deleteMessageTask(_bot)
+
     guild = await _bot.fetch_guild(_bot.main_guild_id)
     overwriteDict = {}
     for roleID in roles:
