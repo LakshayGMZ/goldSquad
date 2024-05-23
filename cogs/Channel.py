@@ -9,7 +9,7 @@ from discord.app_commands import Range
 from discord.ext import commands
 
 from main import CustomBot
-from .scheduler import MST
+from scheduler import MST, lockChannelTask, unlockChannelTask, deleteMessageTask
 
 dotenv.load_dotenv()
 
@@ -37,9 +37,11 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
     @is_bot_owner()
     async def add_channel(self, interaction: discord.Interaction, channel: str):
         if self.bot.configData.addLockedChannels(channel):
-            await interaction.response.send_message(content="Added to locked channels :white_check_mark:", ephemeral=True)
+            await interaction.response.send_message(content="Added to locked channels :white_check_mark:",
+                                                    ephemeral=True)
         else:
-            await interaction.response.send_message(content="Channel already present in locked channels :x:", ephemeral=True)
+            await interaction.response.send_message(content="Channel already present in locked channels :x:",
+                                                    ephemeral=True)
 
     @add_channel.autocomplete('channel')
     async def add_channel_autocomplete(self, interaction: discord.Interaction, current: str):
@@ -58,7 +60,8 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
     @is_bot_owner()
     async def remove_channel(self, interaction: discord.Interaction, channel: str):
         if self.bot.configData.removeLockedChannels(channel):
-            await interaction.response.send_message(content="Removed from locked Channels :white_check_mark:", ephemeral=True)
+            await interaction.response.send_message(content="Removed from locked Channels :white_check_mark:",
+                                                    ephemeral=True)
         else:
             await interaction.response.send_message(content="Channel not in locked channels :x:", ephemeral=True)
 
@@ -93,9 +96,11 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
         timeObj = datetime.time(hour=hours, minute=minutes, tzinfo=MST())
         self.bot.configData.setUnlockTime(timeObj.strftime('%H:%M'))
         await self.bot.reload_extension(f'{os.environ["COGS_PATH"]}.scheduler')
-        await interaction.response.send_message(content="Unlock time set successfully :white_check_mark:", ephemeral=True)
+        await interaction.response.send_message(content="Unlock time set successfully :white_check_mark:",
+                                                ephemeral=True)
 
-    @app_commands.command(name="lock-message", description="Set the message that will be sent before locking the channels.")
+    @app_commands.command(name="lock-message",
+                          description="Set the message that will be sent before locking the channels.")
     @is_bot_owner()
     async def set_lock_message(self, interaction: discord.Interaction):
         await interaction.response.send_message(
@@ -111,7 +116,8 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
             await interaction.edit_original_response(content="The lock message was set Successfully :white_check_mark:")
             self.bot.configData.setLockMessageBody(con.content)
 
-    @app_commands.command(name="unlock-message", description="Set the message that will be sent after unlocking the channels.")
+    @app_commands.command(name="unlock-message",
+                          description="Set the message that will be sent after unlocking the channels.")
     @is_bot_owner()
     async def set_unlock_message(self, interaction: discord.Interaction):
         await interaction.response.send_message(
@@ -125,8 +131,35 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
             if not con:
                 return
 
-            await interaction.edit_original_response(content="The unlock message was set Successfully :white_check_mark:")
+            await interaction.edit_original_response(
+                content="The unlock message was set Successfully :white_check_mark:")
             self.bot.configData.setUnlockMessageBody(con.content)
+
+    @app_commands.command(name="enable", description="Enables the locking and unlocking cycle of the channels.")
+    @is_bot_owner()
+    async def enable(self, interaction: discord.Interaction):
+        if not lockChannelTask.is_running():
+            lockChannelTask.start(self.bot)
+        if not unlockChannelTask.is_running():
+            unlockChannelTask.start(self.bot)
+        if not deleteMessageTask.is_running():
+            deleteMessageTask.start(self.bot)
+
+        await interaction.response.send_message(
+            content="Enabled the locking and unlocking cycle of the channels :white_check_mark:")
+
+    @app_commands.command(name="disable", description="Disables the locking and unlocking cycle of the channels.")
+    @is_bot_owner()
+    async def disable(self, interaction: discord.Interaction):
+        if lockChannelTask.is_running():
+            lockChannelTask.stop()
+        if unlockChannelTask.is_running():
+            unlockChannelTask.stop()
+        if deleteMessageTask.is_running():
+            deleteMessageTask.stop()
+
+        await interaction.response.send_message(
+            content="Disabled the locking and unlocking cycle of the channels :white_check_mark:")
 
     async def cog_app_command_error(
             self,

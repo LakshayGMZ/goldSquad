@@ -111,6 +111,6 @@ class Scheduler(commands.Cog):
         deleteMessageTask.start(self.bot)
 
     def cog_unload(self):
-        lockChannelTask.cancel()
-        unlockChannelTask.cancel()
-        deleteMessageTask.cancel()
+        lockChannelTask.stop()
+        unlockChannelTask.stop()
+        deleteMessageTask.stop()
