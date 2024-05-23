@@ -45,6 +45,8 @@ roles = [
 
 @tasks.loop(time=timeLock)
 async def lockChannelTask(_bot: CustomBot):
+    if not dataStore.isEnabled():
+        return
     guild = await _bot.fetch_guild(_bot.main_guild_id)
     overwriteDict = {}
     for roleID in roles:
@@ -66,8 +68,10 @@ async def lockChannelTask(_bot: CustomBot):
 
 @tasks.loop(time=timeUnlock)
 async def unlockChannelTask(_bot: CustomBot):
-    await deleteMessageTask(_bot)
+    if not _bot.configData.isEnabled():
+        return
 
+    await deleteMessageTask(_bot)
     guild = await _bot.fetch_guild(_bot.main_guild_id)
     overwriteDict = {}
     for roleID in roles:
@@ -89,6 +93,9 @@ async def unlockChannelTask(_bot: CustomBot):
 
 @tasks.loop(time=timeDelete)
 async def deleteMessageTask(_bot: CustomBot):
+    if not _bot.configData.isEnabled():
+        return
+
     for combinedID in _bot.configData.getMessageIds():
         channelID, messageID = combinedID.split("-")
         try:
@@ -111,6 +118,6 @@ class Scheduler(commands.Cog):
         deleteMessageTask.start(self.bot)
 
     def cog_unload(self):
-        lockChannelTask.stop()
-        unlockChannelTask.stop()
-        deleteMessageTask.stop()
+        lockChannelTask.cancel()
+        unlockChannelTask.cancel()
+        deleteMessageTask.cancel()

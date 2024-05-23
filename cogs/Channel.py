@@ -9,7 +9,7 @@ from discord.app_commands import Range
 from discord.ext import commands
 
 from main import CustomBot
-from scheduler import MST, lockChannelTask, unlockChannelTask, deleteMessageTask
+from .scheduler import MST
 
 dotenv.load_dotenv()
 
@@ -138,28 +138,18 @@ class Channel(commands.GroupCog, name="channel", description="Manage auto lockin
     @app_commands.command(name="enable", description="Enables the locking and unlocking cycle of the channels.")
     @is_bot_owner()
     async def enable(self, interaction: discord.Interaction):
-        if not lockChannelTask.is_running():
-            lockChannelTask.start(self.bot)
-        if not unlockChannelTask.is_running():
-            unlockChannelTask.start(self.bot)
-        if not deleteMessageTask.is_running():
-            deleteMessageTask.start(self.bot)
+        self.bot.configData.setEnabled(True)
 
         await interaction.response.send_message(
-            content="Enabled the locking and unlocking cycle of the channels :white_check_mark:")
+            content="Enabled the locking and unlocking cycle of the channels :white_check_mark:", ephemeral=True)
 
     @app_commands.command(name="disable", description="Disables the locking and unlocking cycle of the channels.")
     @is_bot_owner()
     async def disable(self, interaction: discord.Interaction):
-        if lockChannelTask.is_running():
-            lockChannelTask.stop()
-        if unlockChannelTask.is_running():
-            unlockChannelTask.stop()
-        if deleteMessageTask.is_running():
-            deleteMessageTask.stop()
+        self.bot.configData.setEnabled(False)
 
         await interaction.response.send_message(
-            content="Disabled the locking and unlocking cycle of the channels :white_check_mark:")
+            content="Disabled the locking and unlocking cycle of the channels :white_check_mark:", ephemeral=True)
 
     async def cog_app_command_error(
             self,

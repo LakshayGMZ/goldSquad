@@ -121,3 +121,11 @@ class DataStorage:
         self._save_data()
         return True
 
+    def isEnabled(self):
+        return self.data["enabled"]
+
+    def setEnabled(self, enabled: bool):
+        self.data["enabled"] = enabled
+        self._save_data()
+        return True
+
