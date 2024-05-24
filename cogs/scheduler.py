@@ -45,7 +45,7 @@ roles = [
 
 @tasks.loop(time=timeLock)
 async def lockChannelTask(_bot: CustomBot):
-    if not dataStore.isEnabled():
+    if not _bot.configData.isEnabled():
         return
     guild = await _bot.fetch_guild(_bot.main_guild_id)
     overwriteDict = {}
